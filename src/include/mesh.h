@@ -6,13 +6,13 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "shader.h"
+#include "shader_m.h"
 
 #include <string>
 #include <vector>
 using namespace std;
 
-#define MAX_BONE_INFLUENCE 4
+#define MAX_BONE_INFLUENCE 8
 
 struct Vertex {
     // position

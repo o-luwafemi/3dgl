@@ -5,14 +5,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-// #include <learnopengl/filesystem.h>
-
-#include "shader/shader_m.h"
-#include "shader/camera.h"
-#include "shader/animator.h"
-#include "shader/model_animation.h"
+#include "include/filesystem.h"
+#include "include/shader_m.h"
+#include "include/camera.h"
+#include "include/animator.h"
+#include "include/model_animation.h"
 
 #include <iostream>
+#include <filesystem>
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -42,6 +42,8 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+	std::cout << "Current path is " << std::filesystem::current_path() << std::endl;
 
 #ifdef __APPLE__
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -81,7 +83,7 @@ int main()
 
 	// build and compile shaders
 	// -------------------------
-	Shader ourShader("shader/anim_model.vs", "shader/anim_model.fs");
+	Shader ourShader("../shader/anim_model.vs", "../shader/anim_model.fs");
 
 	
 	// load models
@@ -89,13 +91,19 @@ int main()
 
 	// string mdl = "model/cube/cube.dae";
 	// string mdl = "model/backpack/backpack.obj";
-	string mdl = "model/vampire/dancing_vampire.dae";
+	// string mdl = "../model/vampire/dancing_vampire.dae";
 	// Model demoModel("model/vampire/dancing_vampire.dae");
 	// Animation demoAnim("model/vampire/dancing_vampire.dae", &demoModel);
-	Model demoModel(mdl);
-	Animation demoAnim(mdl, &demoModel);
+	// Model demoModel(mdl);
+	// Animation demoAnim(mdl, &demoModel);
 	
-	Animator animator(&demoAnim);
+	// Animator animator(&demoAnim);
+
+
+
+	Model ourModel(FileSystem::getPath("model/vampire/dancing_vampire.dae"));
+	Animation danceAnimation(FileSystem::getPath("model/vampire/dancing_vampire.dae"),&ourModel);
+	Animator animator(&danceAnimation);
 
 
 	// draw in wireframe
@@ -140,7 +148,7 @@ int main()
 		model = glm::translate(model, glm::vec3(0.0f, -0.4f, 0.0f)); // translate it down so it's at the center of the scene
 		model = glm::scale(model, glm::vec3(.5f, .5f, .5f));	// it's a bit too big for our scene, so scale it down
 		ourShader.setMat4("model", model);
-		demoModel.Draw(ourShader);
+		ourModel.Draw(ourShader);
 
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
@@ -152,6 +160,9 @@ int main()
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
 	glfwTerminate();
+
+	
+
 	return 0;
 }
 

@@ -79,46 +79,49 @@ public:
 		glm::mat4 scale = InterpolateScaling(animationTime);
 		m_LocalTransform = translation * rotation * scale;
 	}
-	glm::mat4 GetLocalTransform() { return m_LocalTransform; }
+	glm::mat4 GetLocalTransform() const { return m_LocalTransform; }
 	std::string GetBoneName() const { return m_Name; }
-	int GetBoneID() { return m_ID; }
+	int GetBoneID() const { return m_ID; }
 	
 
 
-	int GetPositionIndex(float animationTime)
+	int GetPositionIndex(float animationTime) const
 	{
 		for (int index = 0; index < m_NumPositions - 1; ++index)
 		{
 			if (animationTime < m_Positions[index + 1].timeStamp)
 				return index;
 		}
-		assert(0);
+		// assert(0);
+		return m_NumPositions - 2;
 	}
 
-	int GetRotationIndex(float animationTime)
+	int GetRotationIndex(float animationTime) const
 	{
 		for (int index = 0; index < m_NumRotations - 1; ++index)
 		{
 			if (animationTime < m_Rotations[index + 1].timeStamp)
 				return index;
 		}
-		assert(0);
+		// assert(0);
+		return m_NumRotations - 2;
 	}
 
-	int GetScaleIndex(float animationTime)
+	int GetScaleIndex(float animationTime) const
 	{
 		for (int index = 0; index < m_NumScalings - 1; ++index)
 		{
 			if (animationTime < m_Scales[index + 1].timeStamp)
 				return index;
 		}
-		assert(0);
+		// assert(0);
+		return m_NumScalings - 2;
 	}
 
 
 private:
 
-	float GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
+	float GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime) const
 	{
 		float scaleFactor = 0.0f;
 		float midWayLength = animationTime - lastTimeStamp;

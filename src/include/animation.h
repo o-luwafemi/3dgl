@@ -29,7 +29,11 @@ public:
 		assert(scene && scene->mRootNode);
 		auto animation = scene->mAnimations[0];
 		m_Duration = animation->mDuration;
-		m_TicksPerSecond = animation->mTicksPerSecond;
+		// m_TicksPerSecond = animation->mTicksPerSecond;
+		m_TicksPerSecond = animation->mTicksPerSecond != 0
+			? animation->mTicksPerSecond
+			: 1.0;
+
 		aiMatrix4x4 globalTransformation = scene->mRootNode->mTransformation;
 		globalTransformation = globalTransformation.Inverse();
 		ReadHierarchyData(m_RootNode, scene->mRootNode);
@@ -53,7 +57,8 @@ public:
 	}
 
 	
-	inline float GetTicksPerSecond() { return m_TicksPerSecond; }
+	// inline float GetTicksPerSecond() { return m_TicksPerSecond; }
+	inline double GetTicksPerSecond() { return m_TicksPerSecond; }
 	inline float GetDuration() { return m_Duration;}
 	inline const AssimpNodeData& GetRootNode() { return m_RootNode; }
 	inline const std::map<std::string,BoneInfo>& GetBoneIDMap() 
@@ -103,7 +108,8 @@ private:
 		}
 	}
 	float m_Duration;
-	int m_TicksPerSecond;
+	// int m_TicksPerSecond;
+	double m_TicksPerSecond;
 	std::vector<Bone> m_Bones;
 	AssimpNodeData m_RootNode;
 	std::map<std::string, BoneInfo> m_BoneInfoMap;
