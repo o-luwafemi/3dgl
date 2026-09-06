@@ -1,0 +1,5 @@
+build
+archive
+app
+app.dSYM
+.DS_Store
