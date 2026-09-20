@@ -64,7 +64,8 @@ int main()
 	glfwSetScrollCallback(window, scroll_callback);
 
 	// tell GLFW to capture our mouse
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	
 
 	// glad: load all OpenGL function pointers
 	// ---------------------------------------
@@ -99,10 +100,11 @@ int main()
 	
 	// Animator animator(&demoAnim);
 
+	string vampire = "model/vampire/dancing_vampire.dae";
+	string catwalk = "model/catwalk/catwalk.fbx";
 
-
-	Model ourModel(FileSystem::getPath("model/vampire/dancing_vampire.dae"));
-	Animation danceAnimation(FileSystem::getPath("model/vampire/dancing_vampire.dae"),&ourModel);
+	Model ourModel(FileSystem::getPath(vampire));
+	Animation danceAnimation(FileSystem::getPath(vampire),&ourModel);
 	Animator animator(&danceAnimation);
 
 
@@ -209,7 +211,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	lastX = xpos;
 	lastY = ypos;
 
-	camera.ProcessMouseMovement(xoffset, yoffset);
+	// camera.ProcessMouseMovement(xoffset, yoffset);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
