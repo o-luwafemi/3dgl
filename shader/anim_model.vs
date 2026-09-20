@@ -9,6 +9,7 @@ layout(location = 5) in ivec4 boneIds;
 layout(location = 6) in vec4 weights;
 
 uniform mat4 projection;
+uniform mat4 uProjection;
 uniform mat4 view;
 uniform mat4 model;
 

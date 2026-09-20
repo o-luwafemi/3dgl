@@ -10,6 +10,7 @@
 #include "include/camera.h"
 #include "include/animator.h"
 #include "include/model_animation.h"
+#include "include/ui_anim.h"
 
 #include <iostream>
 #include <filesystem>
@@ -21,8 +22,8 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 
 // settings
-const unsigned int SCR_WIDTH = 1920;
-const unsigned int SCR_HEIGHT = 1080;
+const unsigned int SCR_WIDTH = 1200;
+const unsigned int SCR_HEIGHT = 800;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 4.0f));
@@ -105,7 +106,13 @@ int main()
 
 	Model ourModel(FileSystem::getPath(vampire));
 	Animation danceAnimation(FileSystem::getPath(vampire),&ourModel);
+
+	AnimationUI animUI(SCR_WIDTH, SCR_HEIGHT);
+
 	Animator animator(&danceAnimation);
+
+	
+
 
 
 	// draw in wireframe
@@ -124,12 +131,14 @@ int main()
 		// input
 		// -----
 		processInput(window);
+		animUI.Update(window, animator);   // handle input first
 		animator.UpdateAnimation(deltaTime);
 		
 		// render
 		// ------
-		glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+		glClearColor(0.05f, 0.05f, 0.15f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
 		// don't forget to enable shader before setting uniforms
 		ourShader.use();
@@ -151,6 +160,10 @@ int main()
 		model = glm::scale(model, glm::vec3(.5f, .5f, .5f));	// it's a bit too big for our scene, so scale it down
 		ourShader.setMat4("model", model);
 		ourModel.Draw(ourShader);
+
+		animUI.Render(animator);
+
+		
 
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)

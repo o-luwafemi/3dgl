@@ -15,6 +15,8 @@ public:
 	{
 		m_CurrentTime = 0.0;
 		m_CurrentAnimation = animation;
+		m_IsPlaying = true;
+		m_PlaybackSpeed = 1.0f;
 
 		m_FinalBoneMatrices.reserve(100);
 
@@ -25,19 +27,61 @@ public:
 	void UpdateAnimation(float dt)
 	{
 		m_DeltaTime = dt;
-		if (m_CurrentAnimation)
+		if (m_CurrentAnimation && m_IsPlaying)
 		{
-			m_CurrentTime += m_CurrentAnimation->GetTicksPerSecond() * dt;
+			m_CurrentTime += m_CurrentAnimation->GetTicksPerSecond() * dt * m_PlaybackSpeed;
 			m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->GetDuration());
-			CalculateBoneTransform(&m_CurrentAnimation->GetRootNode(), glm::mat4(1.0f));
 		}
+
+		if(m_CurrentAnimation)
+			CalculateBoneTransform(&m_CurrentAnimation->GetRootNode(), glm::mat4(1.0f));
 	}
 
 	void PlayAnimation(Animation* pAnimation)
 	{
 		m_CurrentAnimation = pAnimation;
 		m_CurrentTime = 0.0f;
+		m_IsPlaying = true;
 	}
+
+
+	// --- new playback controls ---
+	void Play()  { m_IsPlaying = true; }
+	void Pause() { m_IsPlaying = false; }
+	void Stop()  { m_IsPlaying = false; m_CurrentTime = 0.0f; RecalculateBoneTransform(); }
+	void TogglePlayPause() { m_IsPlaying = !m_IsPlaying; }
+
+	bool IsPlaying() const { return m_IsPlaying; }
+
+	// Scrub to an explicit time (e.g. from a slider), in ticks
+	void SeekTime(float ticks)
+	{
+		if (!m_CurrentAnimation) return;
+		float duration = m_CurrentAnimation->GetDuration();
+		m_CurrentTime = duration > 0.0f ? fmod(ticks, duration) : 0.0f;
+		if (m_CurrentTime < 0.0f) m_CurrentTime += duration; // handle negative wrap
+		RecalculateBoneTransform();
+	}
+
+	// Scrub by normalized 0..1 (convenient for an ImGui slider)
+	void SeekNormalized(float t01)
+	{
+		if (!m_CurrentAnimation) return;
+		SeekTime(t01 * m_CurrentAnimation->GetDuration());
+	}
+
+
+	float GetCurrentTime() const { return m_CurrentTime; }
+	float GetNormalizedTime() const
+	{
+		if (!m_CurrentAnimation || m_CurrentAnimation->GetDuration() <= 0.0f) return 0.0f;
+		return m_CurrentTime / m_CurrentAnimation->GetDuration();
+	}
+	float GetDuration() const { return m_CurrentAnimation ? m_CurrentAnimation->GetDuration() : 0.0f; }
+
+	float& GetPlaybackSpeedRef() { return m_PlaybackSpeed; } // handy for ImGui::SliderFloat binding
+
+
 
 	void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
 	{
@@ -72,9 +116,18 @@ public:
 	}
 
 private:
+	// Recompute the pose immediately after a seek/stop, without waiting for the next UpdateAnimation call.
+	// Useful so scrubbing feels responsive even while paused.
+	void RecalculateBoneTransform()
+	{
+		if (m_CurrentAnimation)
+			CalculateBoneTransform(&m_CurrentAnimation->GetRootNode(), glm::mat4(1.0f));
+	}
 	std::vector<glm::mat4> m_FinalBoneMatrices;
 	Animation* m_CurrentAnimation;
 	float m_CurrentTime;
 	float m_DeltaTime;
+	bool m_IsPlaying;
+	float m_PlaybackSpeed;
 
 };
