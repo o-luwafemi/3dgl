@@ -26,9 +26,9 @@ public:
 		double mx, my;
 		glfwGetCursorPos(window, &mx, &my);
 		// std::cout << "mouse: " << mx << ", " << my << std::endl; // temporary
-		std::cout << "cursor: (" << mx << ", " << my << ")  playPauseBtn: ("
-          << m_PlayPauseBtn.x << ", " << m_PlayPauseBtn.y << ", "
-          << m_PlayPauseBtn.w << ", " << m_PlayPauseBtn.h << ")" << std::endl;
+		// std::cout << "cursor: (" << mx << ", " << my << ")  playPauseBtn: ("
+        //   << m_PlayPauseBtn.x << ", " << m_PlayPauseBtn.y << ", "
+        //   << m_PlayPauseBtn.w << ", " << m_PlayPauseBtn.h << ")" << std::endl;
 		bool mouseDown = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
 		bool justPressed = mouseDown && !m_MouseWasDown;
 
